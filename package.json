@@ -12,7 +12,8 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"test": "xo && nyc ava && eslint test/regex-shorthand.js",
+		"eslint": "eslint test/regex-shorthand.js && eslint rules/regex-shorthand.js",
+		"test": "xo && nyc ava && npm run eslint",
 		"integration": "./test/integration/test.js"
 	},
 	"files": [
