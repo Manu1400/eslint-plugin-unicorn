@@ -1,7 +1,6 @@
 {
 	"name": "eslint-plugin-unicorn",
 	"version": "7.1.0",
-	"description": "Various awesome ESLint rules",
 	"license": "MIT",
 	"repository": "sindresorhus/eslint-plugin-unicorn",
 	"author": {
@@ -19,16 +18,6 @@
 	"files": [
 		"index.js",
 		"rules"
-	],
-	"keywords": [
-		"eslint",
-		"eslintplugin",
-		"eslint-plugin",
-		"unicorn",
-		"linter",
-		"lint",
-		"style",
-		"xo"
 	],
 	"dependencies": {
 		"clean-regexp": "^1.0.0",
