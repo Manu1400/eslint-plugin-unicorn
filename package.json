@@ -12,8 +12,8 @@
 		"node": ">=10"
 	},
 	"scripts": {
-		"eslint": "eslint test/regex-shorthand.js && eslint rules/regex-shorthand.js",
-		"test": "npm run eslint && xo rules/regex-shorthand.js test/regex-shorthand.js && nyc ava",
+		"eslint": "eslint test/regex-shorthand.js && eslint rules/regex-shorthand.js ",
+		"test": "npm run eslint && xo rules/regex-shorthand.js test/regex-shorthand.js && nyc ava ",
 		"test:quick": "ava rules/regex-shorthand.js test/regex-shorthand.js",
 		"watch": "ava -w",
 		"integration": "./test/integration/test.js"
@@ -33,6 +33,7 @@
 		"lodash.snakecase": "^4.0.1",
 		"lodash.topairs": "^4.3.0",
 		"lodash.upperfirst": "^4.2.0",
+		"regexp-tree": "^0.1.5",
 		"reserved-words": "^0.1.2",
 		"safe-regex": "^2.0.1"
 	},
