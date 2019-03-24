@@ -44,6 +44,7 @@
     "no-continue": "off",
     "no-undef": "warn",
     "no-invalid-regexp": "warn",
+    "optimize-regex/optimize-regex": "warn",
     "no-restricted-properties": ["warn", {
       "object": "Intl",
       "property": "Locale",
@@ -99,10 +100,6 @@
         "message": "Using 'RegExp' is not allowed with > two args"
       },
       {
-        "selector": "Literal[regex]",
-        "message": "avoid regular expression literal, see https://github.com/eslint/eslint/issues/11538"
-      },
-      {
         "selector": "CatchClause[param=null]",
         "message": "Proposal: no-optional-catch-binding rule, see https://github.com/eslint/eslint/issues/10264"
       },
@@ -133,6 +130,7 @@
     ]
   },
   "plugins": [
-    "unicorn"
+    "unicorn",
+    "optimize-regex"
   ]
 }

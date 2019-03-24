@@ -13,7 +13,9 @@
 	},
 	"scripts": {
 		"eslint": "eslint test/regex-shorthand.js && eslint rules/regex-shorthand.js",
-		"test": "xo && nyc ava && npm run eslint",
+		"test": "npm run eslint && xo rules/regex-shorthand.js test/regex-shorthand.js && nyc ava",
+		"test:quick": "ava rules/regex-shorthand.js test/regex-shorthand.js",
+		"watch": "ava -w",
 		"integration": "./test/integration/test.js"
 	},
 	"files": [
@@ -23,6 +25,7 @@
 	"dependencies": {
 		"clean-regexp": "^1.0.0",
 		"eslint-ast-utils": "^1.0.0",
+		"eslint-plugin-optimize-regex": "^1.1.6",
 		"import-modules": "^1.1.0",
 		"lodash.camelcase": "^4.1.1",
 		"lodash.defaultsdeep": "^4.6.0",

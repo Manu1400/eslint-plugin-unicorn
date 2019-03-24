@@ -1,72 +1,66 @@
 'use strict';
-const cleanRegexp = require('clean-regexp');
+//TODO: uninstall this dependency
+//const cleanRegexp = require('clean-regexp')
+
 const getDocsUrl = require('./utils/get-docs-url');
 
-const message = 'Use regex shorthands to improve readability.';
+const { parse, generate, optimize } = require('regexp-tree')
+
+const message = 'Use regex shorthands to improve readability.' // '{{value}} can be optimized to {{optimizedRegex}}'
 
 const create = context => {
-	return {
-		'Literal[regex]': node => {
-			const oldPattern = node.regex.pattern;
-			const {flags} = node.regex;
+  const sourceCode = context.getSourceCode()
+  const options = context.options[0] || [
+    'charClassToMeta',       // [0-9] -> [\d]
+    'charClassToSingleChar', // [\d] -> \d
+  ]
 
-			const newPattern = cleanRegexp(oldPattern, flags);
+  return {
+    "Literal[regex]": node => {
+      const { type, value } = sourceCode.getFirstToken(node)
 
-			// Handle regex literal inside RegExp constructor in the other handler
-			if (node.parent.type === 'NewExpression' && node.parent.callee.name === 'RegExp') {
-				return;
-			}
+      if (type !== 'RegularExpression') {
+        return
+      }
 
-			if (oldPattern !== newPattern) {
-				context.report({
-					node,
-					message,
-					fix: fixer => fixer.replaceTextRange(node.range, `/${newPattern}/${flags}`)
-				});
-			}
-		},
-		'NewExpression[callee.name="RegExp"]': node => {
-			const args = node.arguments;
+      let parsedSource
+      try {
+        parsedSource = parse(value)
+      } catch (error) {
+        context.report({
+          node,
+          message: `{{original}} can't be parsed: {{message}}`,
+          data: {
+            original: value,
+            message: error.message,
+          },
+        })
 
-			if (args.length === 0 || args[0].type !== 'Literal') {
-				return;
-			}
+        return
+      }
 
-			const hasRegExp = args[0].regex;
+      const originalRegex = generate(parsedSource).toString()
+      const optimizedRegex = optimize(value, options).toString()
 
-			let oldPattern = null;
-			let flags = null;
+      if (originalRegex === optimizedRegex) {
+        return
+      }
 
-			if (hasRegExp) {
-				oldPattern = args[0].regex.pattern;
-				flags = args[1] && args[1].type === 'Literal' ? args[1].value : args[0].regex.flags;
-			} else {
-				oldPattern = args[0].value;
-				flags = args[1] && args[1].type === 'Literal' ? args[1].value : '';
-			}
+      context.report({
+        node,
+        message,
+        data: {
+          value,
+          optimizedRegex,
+        },
+        fix(fixer) {
+          return fixer.replaceText(node, optimizedRegex)
+        },
+      })
+    }
+  }
+}
 
-			const newPattern = cleanRegexp(oldPattern, flags);
-
-			if (oldPattern !== newPattern) {
-				let fixed;
-				if (hasRegExp) {
-					fixed = `/${newPattern}/`;
-				} else {
-					// Escape backslash and apostrophe because we wrap the result in single quotes.
-					fixed = (newPattern || '').replace(/\\/, '\\\\');
-					fixed = fixed.replace(/'/, '\'');
-					fixed = `'${fixed}'`;
-				}
-
-				context.report({
-					node,
-					message,
-					fix: fixer => fixer.replaceTextRange(args[0].range, fixed)
-				});
-			}
-		}
-	};
-};
 
 module.exports = {
 	create,
